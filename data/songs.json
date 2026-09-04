@@ -1,0 +1,82 @@
+[
+  {
+    "id": "track_001",
+    "title": "Neon Start",
+    "artist": "Atlas Drive",
+    "genre": "electronic",
+    "duration_sec": 215,
+    "bpm": 105,
+    "energy": 0.48,
+    "explicit": false
+  },
+  {
+    "id": "track_002",
+    "title": "Forward Motion",
+    "artist": "Luna Vale",
+    "genre": "pop",
+    "duration_sec": 198,
+    "bpm": 118,
+    "energy": 0.62,
+    "explicit": false
+  },
+  {
+    "id": "track_003",
+    "title": "Static Rush",
+    "artist": "Northbound",
+    "genre": "rock",
+    "duration_sec": 224,
+    "bpm": 126,
+    "energy": 0.78,
+    "explicit": false
+  },
+  {
+    "id": "track_004",
+    "title": "After Hours",
+    "artist": "Luna Vale",
+    "genre": "pop",
+    "duration_sec": 242,
+    "bpm": 121,
+    "energy": 0.71,
+    "explicit": true
+  },
+  {
+    "id": "track_005",
+    "title": "Redline",
+    "artist": "Signal Fire",
+    "genre": "electronic",
+    "duration_sec": 205,
+    "bpm": 136,
+    "energy": 0.91,
+    "explicit": false
+  },
+  {
+    "id": "track_006",
+    "title": "Open Road",
+    "artist": "Paper Satellites",
+    "genre": "indie",
+    "duration_sec": 231,
+    "bpm": 114,
+    "energy": 0.57,
+    "explicit": false
+  },
+  {
+    "id": "track_007",
+    "title": "Night Circuit",
+    "artist": "Glass Avenue",
+    "genre": "electronic",
+    "duration_sec": 188,
+    "bpm": 130,
+    "energy": 0.84,
+    "explicit": false
+  },
+  {
+    "id": "track_008",
+    "title": "Slow Signal",
+    "artist": "Northbound",
+    "genre": "rock",
+    "duration_sec": 256,
+    "bpm": 92,
+    "energy": 0.39,
+    "explicit": false
+  }
+]

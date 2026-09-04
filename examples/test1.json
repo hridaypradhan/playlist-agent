@@ -1,0 +1,12 @@
+{
+  "playlist": "data/playlists/demo.json",
+  "catalog": "data/songs.json",
+  "constraints": {
+    "min_bpm": 110,
+    "allow_explicit": false,
+    "unique_artist": true,
+    "energy_order": "ascending",
+    "must_keep": ["track_002"],
+    "max_duration_sec": 900
+  }
+}

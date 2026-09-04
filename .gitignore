@@ -1,0 +1,16 @@
+# Python virtual environment
+.venv/
+
+# Python generated files
+__pycache__/
+*.py[cod]
+
+# Environment variables / secrets
+.env
+
+# Generated playlist outputs
+outputs/*
+!outputs/.gitkeep
+
+# VS Code local settings
+.vscode/
