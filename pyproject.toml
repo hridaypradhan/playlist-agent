@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "playlist-agent"
 version = "0.1.0"
-description = "A natural-language playlist curation agent capstone project"
+description = "A goal-driven playlist curation system for constraint-based playlist editing"
 requires-python = ">=3.10"
 
 [tool.setuptools.packages.find]
