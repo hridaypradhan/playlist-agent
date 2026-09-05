@@ -114,7 +114,7 @@ The current baseline uses only Python's standard library at runtime. No GPU, loc
 Clone the repository and create a virtual environment:
 
 ```powershell
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/hridaypradhan/playlist-agent.git
 cd playlist-agent
 
 python -m venv .venv
