@@ -15,9 +15,7 @@ def validate_playlist(
 
     if "min_bpm" in constraints:
         minimum = constraints["min_bpm"]
-        results["min_bpm"] = all(
-            track["bpm"] >= minimum for track in state.tracks
-        )
+        results["min_bpm"] = all(track["bpm"] >= minimum for track in state.tracks)
 
     if "allow_explicit" in constraints:
         if constraints["allow_explicit"]:
@@ -31,18 +29,32 @@ def validate_playlist(
         artists = state.artists
         results["unique_artist"] = len(artists) == len(set(artists))
 
-    if constraints.get("energy_order") == "ascending":
+    if "energy_order" in constraints:
+        order = constraints["energy_order"]
         energies = [track["energy"] for track in state.tracks]
-        results["energy_order"] = all(
-            energies[i] <= energies[i + 1]
-            for i in range(len(energies) - 1)
-        )
+
+        if order == "ascending":
+            results["energy_order"] = all(
+                energies[i] <= energies[i + 1] for i in range(len(energies) - 1)
+            )
+
+        elif order == "descending":
+            results["energy_order"] = all(
+                energies[i] >= energies[i + 1] for i in range(len(energies) - 1)
+            )
+
+        else:
+            raise ValueError(f"Unsupported energy order: {order}")
 
     if "must_keep" in constraints:
         required_tracks = constraints["must_keep"]
         results["must_keep"] = all(
-            track_id in state.track_ids
-            for track_id in required_tracks
+            track_id in state.track_ids for track_id in required_tracks
+        )
+
+    if "min_duration_sec" in constraints:
+        results["min_duration_sec"] = (
+            state.duration_sec >= constraints["min_duration_sec"]
         )
 
     if "max_duration_sec" in constraints:

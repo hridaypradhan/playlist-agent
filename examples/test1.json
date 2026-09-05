@@ -7,6 +7,10 @@
     "unique_artist": true,
     "energy_order": "ascending",
     "must_keep": ["track_002"],
+    "min_duration_sec": 780,
     "max_duration_sec": 900
+  },
+  "objective": {
+    "type": "maximize_duration"
   }
 }
