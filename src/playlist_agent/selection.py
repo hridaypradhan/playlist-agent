@@ -12,7 +12,7 @@ def select_additions(
     state: PlaylistState,
     constraints: dict[str, Any],
     objective: dict[str, Any],
-) -> list[str]:
+) -> list[str] | None:
     """Choose additions that produce the best feasible playlist."""
 
     score_objective = get_objective_function(objective)
@@ -21,7 +21,7 @@ def select_additions(
         track_id for track_id in state.catalog if track_id not in state.track_ids
     ]
 
-    best_additions: list[str] = []
+    best_additions: list[str] | None = None
     best_score: float | None = None
 
     # Include the empty subset as a possible solution.

@@ -5,6 +5,7 @@ from typing import Any
 from .actions import add_track, remove_track, reorder_by_energy
 from .evaluation import evaluate_playlist
 from .selection import select_additions
+from .feasibility import check_basic_feasibility
 from .state import PlaylistState
 from .trace import TraceLogger
 
@@ -65,7 +66,7 @@ def add_selected_tracks(
     constraints: dict[str, Any],
     objective: dict[str, Any],
     logger: TraceLogger,
-) -> None:
+) -> bool:
     """Select and add tracks that optimize the objective feasibly."""
 
     additions = select_additions(
@@ -73,6 +74,18 @@ def add_selected_tracks(
         constraints,
         objective,
     )
+
+    if additions is None:
+        logger.log(
+            "failure",
+            reason="no_feasible_addition_set",
+            evidence={
+                "current_duration_sec": state.duration_sec,
+                "min_duration_sec": constraints.get("min_duration_sec"),
+                "max_duration_sec": constraints.get("max_duration_sec"),
+            },
+        )
+        return False
 
     logger.log(
         "decision",
@@ -105,6 +118,8 @@ def add_selected_tracks(
         )
 
         add_track(state, track_id)
+
+    return True
 
 
 def repair_energy_order(
@@ -189,7 +204,26 @@ def run_baseline(
 ) -> dict[str, Any]:
     """Run the deterministic playlist-repair baseline."""
 
-    # Observe initial state.
+    feasible, reason = check_basic_feasibility(constraints)
+
+    if not feasible:
+        logger.log(
+            "failure",
+            reason="infeasible_constraints",
+            evidence={
+                "detail": reason,
+            },
+        )
+
+        return {
+            "success": False,
+            "reason": reason,
+            "passed": 0,
+            "total": len(constraints),
+            "failed_constraints": list(constraints.keys()),
+        }
+
+    # Initial observation.
     log_validation(state, constraints, logger)
 
     # Repair per-track violations.
@@ -202,27 +236,47 @@ def run_baseline(
     log_validation(state, constraints, logger)
 
     # Select and execute additions.
-    add_selected_tracks(
+    additions_succeeded = add_selected_tracks(
         state,
         constraints,
         objective,
         logger,
     )
 
+    if not additions_succeeded:
+        evaluation = evaluate_playlist(
+            state,
+            constraints,
+        )
+
+        return {
+            "success": False,
+            "reason": "no_feasible_addition_set",
+            **evaluation,
+        }
+
     log_validation(state, constraints, logger)
 
-    # Repair playlist ordering.
+    # Repair ordering.
     repair_energy_order(
         state,
         constraints,
         logger,
     )
 
-    # Observe final state.
+    # Final observation.
     final_evaluation = log_validation(
         state,
         constraints,
         logger,
     )
 
-    return final_evaluation
+    return {
+        "success": len(final_evaluation["failed_constraints"]) == 0,
+        "reason": (
+            None
+            if len(final_evaluation["failed_constraints"]) == 0
+            else "constraints_remain_unsatisfied"
+        ),
+        **final_evaluation,
+    }
