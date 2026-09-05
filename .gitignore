@@ -17,3 +17,6 @@ outputs/*
 
 # Python packaging metadata
 *.egg-info/
+
+# Generated evaluation results
+evaluation/results.json

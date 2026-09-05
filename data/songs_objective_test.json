@@ -1,0 +1,32 @@
+[
+  {
+    "id": "obj_001",
+    "title": "Anchor",
+    "artist": "Artist A",
+    "genre": "electronic",
+    "duration_sec": 400,
+    "bpm": 120,
+    "energy": 0.6,
+    "explicit": false
+  },
+  {
+    "id": "obj_002",
+    "title": "Quickstep",
+    "artist": "Artist B",
+    "genre": "electronic",
+    "duration_sec": 150,
+    "bpm": 120,
+    "energy": 0.7,
+    "explicit": false
+  },
+  {
+    "id": "obj_003",
+    "title": "Momentum",
+    "artist": "Artist C",
+    "genre": "electronic",
+    "duration_sec": 150,
+    "bpm": 120,
+    "energy": 0.8,
+    "explicit": false
+  }
+]

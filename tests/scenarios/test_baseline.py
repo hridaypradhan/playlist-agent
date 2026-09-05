@@ -9,7 +9,7 @@ from playlist_agent.trace import TraceLogger
 
 
 def main() -> None:
-    test_case = load_json("examples/test1.json")
+    test_case = load_json("evaluation/cases/test1.json")
 
     catalog = load_catalog(test_case["catalog"])
     playlist = load_playlist(test_case["playlist"])

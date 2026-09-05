@@ -217,10 +217,11 @@ def run_baseline(
 
         return {
             "success": False,
-            "reason": reason,
-            "passed": 0,
+            "reason": "infeasible_constraints",
+            "constraints_evaluated": False,
+            "passed": None,
             "total": len(constraints),
-            "failed_constraints": list(constraints.keys()),
+            "failed_constraints": None,
         }
 
     # Initial observation.
@@ -252,6 +253,7 @@ def run_baseline(
         return {
             "success": False,
             "reason": "no_feasible_addition_set",
+            "constraints_evaluated": True,
             **evaluation,
         }
 
@@ -278,5 +280,6 @@ def run_baseline(
             if len(final_evaluation["failed_constraints"]) == 0
             else "constraints_remain_unsatisfied"
         ),
+        "constraints_evaluated": True,
         **final_evaluation,
     }

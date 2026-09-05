@@ -1,0 +1,21 @@
+{
+  "playlist": "data/playlists/demo.json",
+  "catalog": "data/songs.json",
+  "constraints": {
+    "min_bpm": 110,
+    "allow_explicit": false,
+    "unique_artist": true,
+    "energy_order": "descending",
+    "must_keep": ["track_002"],
+    "min_duration_sec": 780,
+    "max_duration_sec": 900
+  },
+  "objective": {
+    "type": "maximize_duration"
+  },
+  "expected": {
+    "success": true,
+    "final_track_ids": ["track_005", "track_003", "track_002", "track_006"],
+    "objective_score": 858.0
+  }
+}

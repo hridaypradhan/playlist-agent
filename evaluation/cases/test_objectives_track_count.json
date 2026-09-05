@@ -1,0 +1,18 @@
+{
+  "playlist": "data/playlists/objective_demo.json",
+  "catalog": "data/songs_objective_test.json",
+  "constraints": {
+    "unique_artist": true,
+    "energy_order": "ascending",
+    "min_duration_sec": 250,
+    "max_duration_sec": 450
+  },
+  "objective": {
+    "type": "maximize_track_count"
+  },
+  "expected": {
+    "success": true,
+    "final_track_ids": ["obj_002", "obj_003"],
+    "objective_score": 2.0
+  }
+}

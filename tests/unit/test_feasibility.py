@@ -3,7 +3,7 @@ from playlist_agent.feasibility import check_basic_feasibility
 
 
 def main() -> None:
-    test_case = load_json("examples/test_impossible.json")
+    test_case = load_json("evaluation/cases/test_impossible.json")
 
     feasible, reason = check_basic_feasibility(test_case["constraints"])
 

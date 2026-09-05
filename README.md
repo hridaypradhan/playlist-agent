@@ -71,12 +71,19 @@ For the current baseline, the repair workflow is fixed. The execution trace make
 playlist-agent/
 ├── data/
 │   ├── songs.json
+│   ├── songs_objective_test.json
 │   └── playlists/
-│       └── demo.json
-├── examples/
-│   ├── test1.json
-│   ├── test_impossible.json
-│   └── test_catalog_impossible.json
+│       ├── demo.json
+│       └── objective_demo.json
+├── evaluation/
+│   ├── cases/
+│   │   ├── test1.json
+│   │   ├── test_catalog_impossible.json
+│   │   ├── test_descending_energy.json
+│   │   ├── test_impossible.json
+│   │   ├── test_objectives.json
+│   │   └── test_objectives_track_count.json
+│   └── run_evaluation.py
 ├── outputs/
 ├── scripts/
 │   └── check_environment.py
@@ -95,12 +102,14 @@ playlist-agent/
 │       ├── trace.py
 │       └── validator.py
 ├── tests/
+│   ├── scenarios/
+│   └── unit/
 ├── pyproject.toml
 ├── run_baseline.py
 └── README.md
 ```
 
-`data/` contains the local playlist environment and music catalog used by the baseline. `examples/` contains reproducible task specifications. `src/playlist_agent/` contains the implementation, while `tests/` contains development and scenario tests. `outputs/` is used for generated playlist artifacts and execution traces.
+`data/` contains the local playlist environments and synthetic music catalogs used by the baseline. `evaluation/cases/` contains reproducible task specifications and benchmark cases. `evaluation/run_evaluation.py` executes those cases and records machine-readable results. `src/playlist_agent/` contains the implementation. `tests/unit/` tests individual components, while `tests/scenarios/` contains end-to-end baseline scenarios. `outputs/` is used for generated playlists and execution traces.
 
 ## Requirements
 
@@ -136,7 +145,7 @@ python -m pip install -e .
 Run the reproducible baseline example:
 
 ```powershell
-python run_baseline.py --input examples/test1.json
+python run_baseline.py --input evaluation/cases/test1.json
 ```
 
 The baseline should report a successful result with all seven hard constraints satisfied.
@@ -155,16 +164,47 @@ The first file contains the resulting playlist. The second contains the structur
 A contradictory-constraint example is available at:
 
 ```powershell
-python run_baseline.py --input examples/test_impossible.json
+python run_baseline.py --input evaluation/cases/test_impossible.json
 ```
 
 A catalog-limited infeasibility example is available at:
 
 ```powershell
-python run_baseline.py --input examples/test_catalog_impossible.json
+python run_baseline.py --input evaluation/cases/test_catalog_impossible.json
 ```
 
 These cases demonstrate that the baseline distinguishes successful execution from explicit failure.
+
+### Running the Evaluation Suite
+
+The deterministic baseline can also be evaluated across the included benchmark cases:
+
+```powershell
+python evaluation/run_evaluation.py
+```
+
+The suite currently exercises:
+
+- multi-constraint playlist repair;
+- ascending and descending energy ordering;
+- objective-sensitive selection;
+- contradictory constraints; and
+- catalog-limited infeasibility.
+
+Each case declares an expected behavior. The evaluation runner distinguishes the expected test behavior from the actual task outcome, for example:
+
+```text
+test1.json: Test Expectation MET | System Outcome = SUCCESS | 7/7 constraints
+test_catalog_impossible.json: Test Expectation MET | System Outcome = INFEASIBLE | 6/7 constraints
+```
+
+Machine-readable evaluation results are written to:
+
+```text
+evaluation/results.json
+```
+
+Generated per-case execution traces are written under `outputs/`.
 
 ## Input Format
 
@@ -174,7 +214,7 @@ A run is defined by a JSON task specification containing three components:
 2. hard constraints that every successful output must satisfy; and
 3. an objective used to choose among feasible outputs.
 
-The primary reproducible example is `examples/test1.json`:
+The primary reproducible example is `evaluation/cases/test1.json`:
 
 ```json
 {
@@ -266,7 +306,7 @@ The architecture is designed so that the local catalog can later be replaced or 
 Running:
 
 ```powershell
-python run_baseline.py --input examples/test1.json
+python run_baseline.py --input evaluation/cases/test1.json
 ```
 
 starts with the five-track `Demo Workout Mix`.
@@ -572,19 +612,47 @@ A future integration layer could optionally synchronize the resulting playlist w
 
 This separation allows the system to remain reproducible for development and evaluation without requiring every user or evaluator to have the same streaming account or subscription.
 
-## Evaluation Direction
+## Evaluation
 
-The current baseline provides deterministic behavior that future implementations can be compared against.
+The deterministic baseline includes a reusable evaluation harness so that future implementations can be tested against the same task definitions and expected outcomes.
 
-Potential evaluation metrics include:
+The current benchmark suite covers six cases:
+
+| Capability | Evaluation purpose |
+| --- | --- |
+| Multi-constraint repair | Tests successful editing under several simultaneous hard constraints. |
+| Descending energy ordering | Tests end-to-end handling of an alternative ordering constraint. |
+| Duration objective | Tests selection of the feasible playlist with maximum duration. |
+| Track-count objective | Tests selection of a different feasible playlist when maximizing number of tracks. |
+| Contradictory constraints | Tests early recognition of a structurally infeasible request. |
+| Catalog-limited infeasibility | Tests recognition that the available environment cannot satisfy the request within the baseline workflow. |
+
+The objective cases deliberately hold the environment and hard constraints constant while changing only the optimization objective. This verifies that objective selection can change the resulting playlist rather than merely changing a configuration label.
+
+Current evaluation records include:
+
+- task success or infeasibility;
+- whether the observed behavior matches the test expectation;
+- hard-constraint satisfaction;
+- objective type and objective score;
+- initial and final playlist duration;
+- initial and final track count;
+- final track IDs; and
+- execution-trace length.
+
+Objective scores are interpreted within their objective type rather than compared directly across different units. For example, a duration score in seconds is not directly comparable to a track-count score.
+
+### Future Evaluation Directions
+
+As the project becomes agentic, the same evaluation framework can be extended with metrics such as:
 
 - **hard-constraint satisfaction rate** — proportion of requested hard constraints satisfied;
-- **task success rate** — proportion of tasks for which all hard constraints are satisfied;
-- **objective score** — performance on the user-selected optimization objective;
+- **task success rate** — proportion of feasible tasks completed successfully;
+- **objective attainment** — quality of the selected solution relative to the best known feasible solution;
 - **playlist preservation** — proportion of original tracks retained when preservation is desired;
-- **edit efficiency** — number of additions, removals, replacements, and moves required to reach the final state;
+- **edit efficiency** — number of additions, removals, replacements, and moves required;
 - **trajectory efficiency** — number of decisions or tool calls required to complete a task;
-- **failure recognition** — ability to identify infeasible requests rather than returning invalid results;
+- **failure recognition** — ability to identify infeasible requests rather than return invalid results;
 - **recovery rate** — ability to recover from invalid actions or tool failures;
 - **preference satisfaction** — degree to which soft user preferences are met; and
 - **human evaluation** — stakeholder judgment of playlist quality, usefulness, and faithfulness to the request.
